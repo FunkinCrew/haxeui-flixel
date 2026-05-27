@@ -93,6 +93,15 @@ class FlxTextInput extends TextBase {
         return value;
     }
 
+    private override function get_caretIndex():Int {
+        return tf.caretIndex;
+    }
+
+    private override function set_caretIndex(value:Int):Int {
+        tf.setSelection(value, value);
+        return value;
+    }
+
     private override function validateData() {
         if (_text != null) {
             if (_dataSource == null) {
