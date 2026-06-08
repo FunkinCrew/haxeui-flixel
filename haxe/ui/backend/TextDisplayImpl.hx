@@ -19,10 +19,12 @@ class TextDisplayImpl extends TextBase {
     
     private override function validateData() {
         if (_text != null) {
+            tf.clearFormats();
             if (_dataSource == null) {
                 tf.text = normalizeText(_text);
             }
         } else if (_htmlText != null) {
+            tf.clearFormats();
             var rules = [];
             var outText = processTags(_htmlText, rules);
             if (rules.length > 0) {
