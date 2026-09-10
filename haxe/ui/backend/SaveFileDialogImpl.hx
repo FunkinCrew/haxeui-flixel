@@ -25,7 +25,7 @@ class SaveFileDialogImpl extends SaveFileDialogBase {
     }
     
     private function onSaveResult(r:Bool) {
-        if (r == true) {
+        if (r) {
             dialogConfirmed();
         } else {
             dialogCancelled();

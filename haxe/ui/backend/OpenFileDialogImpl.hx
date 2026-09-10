@@ -20,8 +20,8 @@ class OpenFileDialogImpl extends OpenFileDialogBase {
     
     public override function show() {
         var readMode = haxe.ui.util.html5.FileSelector.ReadMode.None;
-        if (options.readContents == true) {
-            if (options.readAsBinary == false) {
+        if (options.readContents) {
+            if (!options.readAsBinary) {
                 readMode = haxe.ui.util.html5.FileSelector.ReadMode.Text;
             } else {
                 readMode = haxe.ui.util.html5.FileSelector.ReadMode.Binary;
@@ -31,7 +31,7 @@ class OpenFileDialogImpl extends OpenFileDialogBase {
     }
     
     private function onFileSelected(cancelled:Bool, files:Array<SelectedFileInfo>) {
-        if (cancelled == false) {
+        if (!cancelled) {
             dialogConfirmed(files);
         } else {
             dialogCancelled();
@@ -97,13 +97,13 @@ class OpenFileDialogImpl extends OpenFileDialogBase {
                 name: fileRef.name,
                 fullPath: fullPath
             }
-            if (options.readContents == true) {
+            if (options.readContents) {
                 _refToInfo.set(fileRef, info);
             }
             infos.push(info);
         }
         
-        if (options.readContents == false) {
+        if (!options.readContents) {
             dialogConfirmed(infos);
         } else {
             for (fileRef in _refToInfo.keys()) {
@@ -118,7 +118,7 @@ class OpenFileDialogImpl extends OpenFileDialogBase {
         var fileRef = cast(e.target, FileReference);
         fileRef.removeEventListener(Event.COMPLETE, onFileComplete);
         var info = _refToInfo.get(fileRef);
-        if (options.readAsBinary == true) {
+        if (options.readAsBinary) {
             info.isBinary = true;
             info.bytes = Bytes.ofData(fileRef.data);
         } else {

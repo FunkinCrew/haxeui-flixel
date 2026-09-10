@@ -130,7 +130,7 @@ class ComponentImpl extends ComponentBase {
     private function findClipComponent():Component {
         if (_cachedClipComponent != null) {
             return _cachedClipComponent;
-        } else if (_cachedClipComponentNone == true) {
+        } else if (_cachedClipComponentNone) {
             return null;
         }
         
@@ -154,7 +154,7 @@ class ComponentImpl extends ComponentBase {
 
     @:access(haxe.ui.core.Component)
     private function inBounds(x:Float, y:Float):Bool {
-        if (asComponent.hidden == true) {
+        if (asComponent.hidden) {
             return false;
         }
 
@@ -169,7 +169,7 @@ class ComponentImpl extends ComponentBase {
         }
 
         // let make sure its in the clip rect too
-        if (b == true) {
+        if (b) {
             var clip:Component = findClipComponent();
             if (clip != null) {
                 b = false;
@@ -305,12 +305,12 @@ class ComponentImpl extends ComponentBase {
 
     private var _destroy:Bool = false;
     private override function handleRemoveComponent(child:Component, dispose:Bool = true):Component {
-        if (this.exists == false) { // lets make sure this component exists - it could have been destroyed through a variety of different ways already (like switching state for example, or simply manually destroying it)
+        if (this.exists) { // lets make sure this component exists - it could have been destroyed through a variety of different ways already (like switching state for example, or simply manually destroying it)
             return child;
         }
         if (members.indexOf(child) > -1) {
             remove(child, true);
-            if (dispose == true) {
+            if (dispose) {
                 child._destroy = true;
                 child.destroyInternal();
             }
@@ -449,7 +449,7 @@ class ComponentImpl extends ComponentBase {
     private override function mapEvent(type:String, listener:UIEvent->Void) {
         switch (type) {
             case MouseEvent.MOUSE_DOWN:
-                if (_eventMap.exists(MouseEvent.MOUSE_DOWN) == false) {
+                if (!_eventMap.exists(MouseEvent.MOUSE_DOWN)) {
                     if (hasTextInput()) {
                         _eventMap.set(MouseEvent.MOUSE_DOWN, listener);
                         getTextInput().onMouseDown = __onTextInputMouseEvent;
@@ -457,7 +457,7 @@ class ComponentImpl extends ComponentBase {
                 }
 
             case MouseEvent.MOUSE_UP:
-                if (_eventMap.exists(MouseEvent.MOUSE_UP) == false) {
+                if (!_eventMap.exists(MouseEvent.MOUSE_UP)) {
                     if (hasTextInput()) {
                         _eventMap.set(MouseEvent.MOUSE_UP, listener);
                         getTextInput().onMouseUp = __onTextInputMouseEvent;
@@ -465,7 +465,7 @@ class ComponentImpl extends ComponentBase {
                 }
                 
             case MouseEvent.CLICK:
-                if (_eventMap.exists(MouseEvent.CLICK) == false) {
+                if (!_eventMap.exists(MouseEvent.CLICK)) {
                     if (hasTextInput()) {
                         _eventMap.set(MouseEvent.CLICK, listener);
                         getTextInput().onClick = __onTextInputMouseEvent;
@@ -473,7 +473,7 @@ class ComponentImpl extends ComponentBase {
                 }
 
             case KeyboardEvent.KEY_DOWN:
-                if (_eventMap.exists(KeyboardEvent.KEY_DOWN) == false) {
+                if (!_eventMap.exists(KeyboardEvent.KEY_DOWN)) {
                     if (hasTextInput()) {
                         _eventMap.set(KeyboardEvent.KEY_DOWN, listener);
                         getTextInput().onKeyDown = __onTextInputKeyboardEvent;
@@ -481,7 +481,7 @@ class ComponentImpl extends ComponentBase {
                 }
 
             case KeyboardEvent.KEY_UP:
-                if (_eventMap.exists(KeyboardEvent.KEY_UP) == false) {
+                if (!_eventMap.exists(KeyboardEvent.KEY_UP)) {
                     if (hasTextInput()) {
                         _eventMap.set(KeyboardEvent.KEY_UP, listener);
                         getTextInput().onKeyUp = __onTextInputKeyboardEvent;
@@ -489,8 +489,8 @@ class ComponentImpl extends ComponentBase {
                 }
                 
             case UIEvent.CHANGE:
-                if (_eventMap.exists(UIEvent.CHANGE) == false) {
-                    if (hasTextInput() == true) {
+                if (!_eventMap.exists(UIEvent.CHANGE)) {
+                    if (hasTextInput()) {
                         _eventMap.set(UIEvent.CHANGE, listener);
                         getTextInput().onChange = __onTextInputChange;
                     }
@@ -715,7 +715,7 @@ class ComponentImpl extends ComponentBase {
             findChildrenAtPoint(r, x, y, array);
         }
         
-        if (reverse == true) {
+        if (reverse) {
             array.reverse();
         }
         
@@ -723,7 +723,7 @@ class ComponentImpl extends ComponentBase {
     }
 
     private function findChildrenAtPoint(child:Component, x:Float, y:Float, array:Array<Component>) {
-        if (child.inBounds(x, y) == true) {
+        if (child.inBounds(x, y)) {
             array.push(child);
         }
         for (c in child.childComponents) {
@@ -743,7 +743,7 @@ class ComponentImpl extends ComponentBase {
             }
 
             r = hasChildRecursive(t, child);
-            if (r == true) {
+            if (r) {
                 break;
             }
         }
@@ -761,7 +761,7 @@ class ComponentImpl extends ComponentBase {
             super.update(elapsed);
             return;
         }
-        if (_destroy == true) {
+        if (_destroy) {
             clearCaches();
             destroyInternal();
             super.update(elapsed);
@@ -773,7 +773,7 @@ class ComponentImpl extends ComponentBase {
 
         _updates++;
         if (_updates == 2) {
-            if (asComponent.hidden == false) {
+            if (!asComponent.hidden) {
                 applyVisibility(true);
             } else {
                 applyVisibility(false);
@@ -844,7 +844,7 @@ class ComponentImpl extends ComponentBase {
             return;
         }
 
-        if (hasTextInput() && asComponent.hidden == false) {
+        if (hasTextInput() && !asComponent.hidden) {
             getTextInput().visible = true;
         }
         for (c in childComponents) {

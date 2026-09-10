@@ -29,7 +29,7 @@ class MouseHelper {
     private static var _mouseOverTarget:Dynamic;
 
     public static function init() {
-        if (_initialized == true) {
+        if (_initialized) {
             return;
         }
         
@@ -199,7 +199,7 @@ class MouseHelper {
             while (c != null) {
                 if (c.hasEvent(event.type)) {
                     c.dispatch(event);
-                    if (event.canceled == true) {
+                    if (event.canceled) {
                         return;
                     }
                 }
@@ -216,7 +216,7 @@ class MouseHelper {
 
         for (l in list) {
             l.fn(event);
-            if (event.canceled == true) {
+            if (event.canceled) {
                 break;
             }
         }

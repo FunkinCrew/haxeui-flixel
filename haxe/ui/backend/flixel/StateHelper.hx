@@ -46,11 +46,11 @@ class StateHelper {
             }
             
             if ((m is FlxTypedGroup)) {
-                if (hasMember(member, cast m) == true) {
+                if (hasMember(member, cast m)) {
                     return true;
                 }
             } else if ((m is FlxSpriteGroup)) {
-                if (groupHasMember(member, cast m) == true) {
+                if (groupHasMember(member, cast m)) {
                     return true;
                 }
             }
@@ -74,11 +74,11 @@ class StateHelper {
             }
             
             if ((m is FlxTypedGroup)) {
-                if (hasMember(member, cast m) == true) {
+                if (hasMember(member, cast m)) {
                     return true;
                 }
             } else if ((m is FlxSpriteGroup)) {
-                if (groupHasMember(member, cast m) == true) {
+                if (groupHasMember(member, cast m)) {
                     return true;
                 }
             }

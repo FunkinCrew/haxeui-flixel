@@ -259,7 +259,7 @@ class OpenFLTextInput extends TextBase {
             ref = ref.parentComponent;
         }
 
-        if (_parentHidden == true) {
+        if (_parentHidden) {
             return;
         }
 
@@ -282,19 +282,11 @@ class OpenFLTextInput extends TextBase {
             }
             
             var rootRect = new Rectangle(r.screenLeft, r.screenTop, r.width, r.height);
-            if (after == true && rootRect.intersects(rc)) {
+            if (after && rootRect.intersects(rc)) {
                 overlaps = true;
                 break;
             }
         }
-
-        /*
-        if (overlaps == true && tf.visible == true) {
-            tf.visible = false;
-        } else if (overlaps == false && tf.visible == false) {
-            tf.visible = true;
-        }
-        */
     }
     
     public function destroy(component:Component) {

@@ -122,14 +122,14 @@ class ScreenImpl extends ScreenBase {
             } else if ((m is FlxTypedGroup)) {
                 var group:FlxTypedGroup<FlxBasic> = cast m;
                 group.memberAdded.addOnce(onMemberAdded);
-                if (checkMembers(group) == true) {
+                if (checkMembers(group)) {
                     found = true;
                     break;
                 }
             } else if ((m is FlxTypedSpriteGroup)) {
                 var spriteGroup:FlxTypedSpriteGroup<FlxSprite> = cast m;
                 spriteGroup.group.memberAdded.addOnce(onMemberAdded);
-                if (checkMembers(cast spriteGroup.group) == true) {
+                if (checkMembers(cast spriteGroup.group)) {
                     found = true;
                     break;
                 }
@@ -205,7 +205,7 @@ class ScreenImpl extends ScreenBase {
             }
         }
 
-        if (StateHelper.currentState.exists == true) {
+        if (StateHelper.currentState.exists) {
             if (rootComponents.indexOf(component) == -1) {
                 rootComponents.push(component);
             }
@@ -234,7 +234,7 @@ class ScreenImpl extends ScreenBase {
         if (rootComponents.indexOf(component) != -1) {
             throw "component wasnt actually removed from array, or there is a duplicate in the array";
         }
-        if (StateHelper.currentState.exists == true) {
+        if (StateHelper.currentState.exists) {
             StateHelper.currentState.remove(component, true);
         }
         // Destroying a sprite makes it get removed from its container (in this case, the state) without
@@ -252,7 +252,7 @@ class ScreenImpl extends ScreenBase {
 
     private var _resizeHandlerAdded:Bool = false;
     private function addResizeHandler() {
-        if (_resizeHandlerAdded == true) {
+        if (_resizeHandlerAdded) {
             return;
         }
         _resizeHandlerAdded = true;
@@ -318,13 +318,13 @@ class ScreenImpl extends ScreenBase {
     private override function mapEvent(type:String, listener:UIEvent->Void) {
         switch (type) {
             case MouseEvent.MOUSE_MOVE | MouseEvent.MOUSE_OVER | MouseEvent.MOUSE_OUT | MouseEvent.MOUSE_DOWN | MouseEvent.MOUSE_UP | MouseEvent.MOUSE_WHEEL | MouseEvent.CLICK | MouseEvent.DBL_CLICK | MouseEvent.RIGHT_CLICK | MouseEvent.RIGHT_MOUSE_DOWN | MouseEvent.RIGHT_MOUSE_UP | MouseEvent.MIDDLE_CLICK | MouseEvent.MIDDLE_MOUSE_DOWN | MouseEvent.MIDDLE_MOUSE_UP:
-                if (_mapping.exists(type) == false) {
+                if (!_mapping.exists(type)) {
                     _mapping.set(type, listener);
                     MouseHelper.notify(type, __onMouseEvent, 10);
                 }
 
             case KeyboardEvent.KEY_DOWN | KeyboardEvent.KEY_UP:
-                if (_mapping.exists(type) == false) {
+                if (!_mapping.exists(type)) {
                     _mapping.set(type, listener);
                     KeyboardHelper.notify(type, __onKeyEvent, 10);
                 }
@@ -371,7 +371,7 @@ class ScreenImpl extends ScreenBase {
                     }
                 }
                 var spriteGroup:FlxTypedSpriteGroup<FlxSprite> = cast m;
-                if (containsUnsolicitedMemberAt(x, y, cast spriteGroup.group) == true) {
+                if (containsUnsolicitedMemberAt(x, y, cast spriteGroup.group)) {
                     return true;
                 }
             } else if ((m is FlxTypedSpriteGroup)) {
@@ -379,7 +379,7 @@ class ScreenImpl extends ScreenBase {
                 if (!spriteGroup.visible) {
                     continue;
                 }
-                if (containsUnsolicitedMemberAt(x, y, cast spriteGroup.group) == true) {
+                if (containsUnsolicitedMemberAt(x, y, cast spriteGroup.group)) {
                     return true;
                 }
             } else if ((m is FlxSprite)) {

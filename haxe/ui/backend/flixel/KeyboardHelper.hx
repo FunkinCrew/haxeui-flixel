@@ -16,7 +16,7 @@ class KeyboardHelper {
     private static var _callbacks:Map<String, Array<KeyboardCallback>> = new Map<String, Array<KeyboardCallback>>();
 
     public static function init() {
-        if (_initialized == true) {
+        if (_initialized) {
             return;
         }
         
@@ -76,7 +76,7 @@ class KeyboardHelper {
         while (target != null) {
             if (target.hasEvent(event.type)) {
                 target.dispatch(event);
-                if (event.canceled == true) {
+                if (event.canceled) {
                     return;
                 }
             }
@@ -92,7 +92,7 @@ class KeyboardHelper {
 
         for (l in list) {
             l.fn(event);
-            if (event.canceled == true) {
+            if (event.canceled) {
                 break;
             }
         }

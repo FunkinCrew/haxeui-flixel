@@ -134,12 +134,12 @@ class TextDisplayImpl extends TextBase {
                         tagDetails = "";
                     }
                 case "/":
-                    if (inTag == true) {
+                    if (inTag) {
                         endTag = true;
                     }
                 case ">":
-                    if (inTag == true) {
-                        if (endTag == false) {
+                    if (inTag) {
+                        if (!endTag) {
                             var n = tagDetails.indexOf("color=");
                             if (n != -1) {
                                 var col = tagDetails.substring(n + "color=".length);
@@ -160,7 +160,7 @@ class TextDisplayImpl extends TextBase {
                         inTag = false;
                     }
                 default:
-                    if (inTag == true) {
+                    if (inTag) {
                         tagDetails += c.toLowerCase();
                     } else {
                         out += c;

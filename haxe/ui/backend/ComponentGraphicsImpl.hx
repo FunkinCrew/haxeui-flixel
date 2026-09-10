@@ -43,7 +43,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function clear() {
         super.clear();
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         flashGfxSprite.graphics.clear();
@@ -54,7 +54,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function setPixel(x:Float, y:Float, color:Color) {
         super.setPixel(x, y, color);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         flashGfxSprite.graphics.beginFill(color);
@@ -65,7 +65,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function setPixels(pixels:Bytes) {
         super.setPixels(pixels);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
 
@@ -109,7 +109,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function moveTo(x:Float, y:Float) {
         super.moveTo(x, y);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (currentPath != null) {
@@ -122,7 +122,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function lineTo(x:Float, y:Float) {
         super.lineTo(x, y);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (currentPath != null) {
@@ -135,7 +135,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function strokeStyle(color:Null<Color>, thickness:Null<Float> = 1, alpha:Null<Float> = 1) {
         super.strokeStyle(color, thickness, alpha);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (currentPath == null) { 
@@ -149,7 +149,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function circle(x:Float, y:Float, radius:Float) {
         super.circle(x, y, radius);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (_currentFillColor != null) {
@@ -164,7 +164,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function fillStyle(color:Null<Color>, alpha:Null<Float> = 1) {
         super.fillStyle(color, alpha);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (currentPath == null) {
@@ -177,7 +177,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override  function curveTo(controlX:Float, controlY:Float, anchorX:Float, anchorY:Float) {
         super.curveTo(controlX, controlY, anchorX, anchorY);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         
@@ -191,7 +191,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function cubicCurveTo(controlX1:Float, controlY1:Float, controlX2:Float, controlY2:Float, anchorX:Float, anchorY:Float) {
         super.cubicCurveTo(controlX1, controlY1, controlX2, controlY2, anchorX, anchorY);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (currentPath != null) {
@@ -204,7 +204,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function rectangle(x:Float, y:Float, width:Float, height:Float) {
         super.rectangle(x, y, width, height);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (_currentFillColor != null) {
@@ -219,7 +219,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function image(resource:Variant, x:Null<Float> = null, y:Null<Float> = null, width:Null<Float> = null, height:Null<Float> = null) {
         super.image(resource, x, y, width, height);
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         ImageLoader.instance.load(resource, function(imageInfo) {
@@ -245,7 +245,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function beginPath() {
         super.beginPath();
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         currentPath = new GraphicsPath();
@@ -253,7 +253,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function closePath() {
         super.closePath();
-        if (_hasSize == false) {
+        if (!_hasSize) {
             return;
         }
         if (currentPath != null && currentPath.commands != null && currentPath.commands.length > 0) {
@@ -283,7 +283,7 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
 
     public override function resize(width:Null<Float>, height:Null<Float>) {
         if (width > 0 && height > 0) {
-            if (_hasSize == false) {
+            if (!_hasSize) {
                 _hasSize = true;
                 sprite.makeGraphic(Std.int(width), Std.int(height), 0x00000000, true);
                 sprite.visible = true;

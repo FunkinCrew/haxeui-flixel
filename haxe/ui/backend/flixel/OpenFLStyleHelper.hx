@@ -13,7 +13,7 @@ class OpenFLStyleHelper {
     }
 
     public static function paintStyleSection(graphics:Graphics, style:Style, width:Float, height:Float, left:Float = 0, top:Float = 0, clear:Bool = true):Bool {
-        if (clear == true) {
+        if (clear) {
             graphics.clear();
         }
 
