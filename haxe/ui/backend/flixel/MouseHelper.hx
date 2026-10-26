@@ -237,6 +237,9 @@ class MouseHelper {
         var components = Screen.instance.findComponentsUnderPoint(x, y);
         components.reverse();
         for (c in components) {
+            if (c.style != null && c.style.pointerEvents == "none") {
+                continue;
+            }
             if (c.state == StateHelper.currentState) {
                 return c;
             }
