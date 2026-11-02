@@ -216,11 +216,37 @@ class ComponentImpl extends ComponentBase {
                 _surface.makeGraphic(1, 1, 0x0, true);
                 _surface.visible = false;
             } else {
-                _surface.makeGraphic(w, h, 0x0, true);
+                resizeSurface(w, h);
                 applyStyle(style);
             }
         }
     }
+
+    /**
+     * Components that resize often would make a new bitmap and texture every time.
+     */
+    private function resizeSurface(w:Int, h:Int) {
+        var graphic = _surface.graphic;
+        var bitmap = graphic != null ? graphic.bitmap : null;
+        if (bitmap != null && bitmap.width >= w && bitmap.height >= h && bitmap.width <= w * SURFACE_SHRINK_RATIO && bitmap.height <= h * SURFACE_SHRINK_RATIO) {
+            var frame = graphic.imageFrame.frame;
+            frame.frame = frame.frame.set(0, 0, w, h);
+            frame.sourceSize.set(w, h);
+            _surface.frame = frame;
+            return;
+        }
+
+        var capacityW:Int = w > SURFACE_SPARE_LIMIT ? w : Std.int(Math.min(SURFACE_SPARE_LIMIT, Math.ceil(w * SURFACE_SPARE_RATIO)));
+        var capacityH:Int = h > SURFACE_SPARE_LIMIT ? h : Std.int(Math.min(SURFACE_SPARE_LIMIT, Math.ceil(h * SURFACE_SPARE_RATIO)));
+        _surface.makeGraphic(capacityW, capacityH, 0x0, true);
+        if (capacityW != w || capacityH != h) {
+            resizeSurface(w, h);
+        }
+    }
+
+    private static inline var SURFACE_SPARE_RATIO:Float = 1.5;
+    private static inline var SURFACE_SHRINK_RATIO:Float = 4;
+    private static inline var SURFACE_SPARE_LIMIT:Int = 2048;
     
     //***********************************************************************************************************
     // Display tree
