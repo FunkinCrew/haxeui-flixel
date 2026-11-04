@@ -1,17 +1,18 @@
 package haxe.ui.backend;
 
 import flixel.text.FlxText;
+import haxe.ui.backend.flixel.HiResFlxText;
 import haxe.ui.Toolkit;
 import haxe.ui.util.Color;
 
 class TextDisplayImpl extends TextBase {
     private static inline var PADDING_X:Int = 2;
     
-    public var tf:FlxText;
+    public var tf:HiResFlxText;
     
     public function new() {
         super();
-        tf = new FlxText();
+        tf = new HiResFlxText();
         tf.pixelPerfectRender = true;
         tf.autoSize = true;
         tf.active = false;
@@ -84,23 +85,20 @@ class TextDisplayImpl extends TextBase {
     }
     
     private override function validateDisplay() {
-        if (tf.textField.width != _width) {
-            var width = _width * Toolkit.scaleX;
-            tf.textField.width = (width >= 1 ? width : 1);
-        }
-        if (tf.textField.height != _height) {
-            var height = _height * Toolkit.scaleY;
-            tf.textField.height = (height >= 1 ? height : 1);
+        var width = _width * Toolkit.scaleX;
+        var height = _height * Toolkit.scaleY;
+        if (tf.fieldWidth != width || tf.fieldHeight != height) {
+            tf.setFieldSize(width >= 1 ? width : 1, height >= 1 ? height : 1);
         }
     }
     
     private override function measureText() {
-        _textWidth = (Math.fround(tf.textField.textWidth) + (PADDING_X * Toolkit.scaleX)) / Toolkit.scaleX;
-        _textHeight = Math.fround(tf.textField.textHeight) / Toolkit.scaleY;
+        _textWidth = (Math.fround(tf.logicalTextWidth) + (PADDING_X * Toolkit.scaleX)) / Toolkit.scaleX;
+        _textHeight = Math.fround(tf.logicalTextHeight) / Toolkit.scaleY;
         if (_textHeight == 0) {
             var tmpText:String = tf.text;
             tf.text = "|";
-            _textHeight = tf.textField.textHeight;
+            _textHeight = tf.logicalTextHeight;
             tf.text = tmpText;
         }
     }
