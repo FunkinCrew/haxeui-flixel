@@ -8,6 +8,7 @@ import flixel.text.FlxText.FlxTextBorderStyle;
 import haxe.ui.Toolkit;
 import haxe.ui.backend.TextInputImpl.TextInputEvent;
 import haxe.ui.backend.flixel.FlxStyleHelper;
+import haxe.ui.backend.flixel.HiResFlxText;
 import haxe.ui.core.Component;
 import haxe.ui.core.ImageDisplay;
 import haxe.ui.core.Platform;
@@ -653,8 +654,8 @@ class ComponentImpl extends ComponentBase {
         }
         
         if (_textDisplay != null) {
-            var offsetX = 2 / Toolkit.scaleX;
-            var offsetY = 2 / Toolkit.scaleY;
+            var offsetX = 2 / HiResFlxText.resolution / Toolkit.scaleX;
+            var offsetY = 2 / HiResFlxText.resolution / Toolkit.scaleY;
             _textDisplay.tf.x = xpos + _textDisplay.left - offsetX;
             _textDisplay.tf.y = ypos + _textDisplay.top - offsetY;
         }

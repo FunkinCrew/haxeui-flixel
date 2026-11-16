@@ -1,5 +1,7 @@
 package haxe.ui.backend.flixel;
 
+import flixel.FlxCamera;
+import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.text.FlxText;
 
@@ -122,6 +124,18 @@ class HiResFlxText extends FlxText {
         origin.set(0, 0);
         scale.set(1 / appliedResolution, 1 / appliedResolution);
         super.draw();
+    }
+
+    override public function isPixelPerfectRender(?camera:FlxCamera):Bool {
+        return false;
+    }
+
+    override public function getScreenPosition(?result:FlxPoint, ?camera:FlxCamera):FlxPoint {
+        result = super.getScreenPosition(result, camera);
+        if (super.isPixelPerfectRender(camera)) {
+            result.set(Math.floor(result.x * appliedResolution) / appliedResolution, Math.floor(result.y * appliedResolution) / appliedResolution);
+        }
+        return result;
     }
 
     override function set_clipRect(rect:FlxRect):FlxRect {
