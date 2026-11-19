@@ -231,7 +231,8 @@ class ComponentImpl extends ComponentBase {
     }
 
     private override function handleSetComponentIndex(child:Component, index:Int) {
-        handleAddComponentAt(child, index);
+        members.remove(child);
+        members.insert(index + getComponentIndexOffset(), child);
     }
 
     private override function handleAddComponent(child:Component):Component {
@@ -247,6 +248,11 @@ class ComponentImpl extends ComponentBase {
 
     private override function handleAddComponentAt(child:Component, index:Int):Component {
         // index is in terms of haxeui components, not flixel children
+        insert(index + getComponentIndexOffset(), child);
+        return child;
+    }
+
+    private function getComponentIndexOffset():Int {
         var indexOffset = 0;
         while (indexOffset < members.length) {
             if (!(members[indexOffset] is Component)) {
@@ -255,9 +261,7 @@ class ComponentImpl extends ComponentBase {
                 break;
             }
         }
-
-        insert(index + indexOffset, child);
-        return child;
+        return indexOffset;
     }
 
     private var _unsolicitedMembers:Array<{sprite: FlxSprite, originalX:Float, originalY:Float}> = null;
