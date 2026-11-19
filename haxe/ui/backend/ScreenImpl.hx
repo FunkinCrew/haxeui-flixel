@@ -234,8 +234,9 @@ class ScreenImpl extends ScreenBase {
         if (rootComponents.indexOf(component) != -1) {
             throw "component wasnt actually removed from array, or there is a duplicate in the array";
         }
-        if (StateHelper.currentState.exists) {
-            StateHelper.currentState.remove(component, true);
+        var state = component.state != null ? component.state : StateHelper.currentState;
+        if (state.exists) {
+            state.remove(component, true);
         }
         // Destroying a sprite makes it get removed from its container (in this case, the state) without
         // being spliced, causing issues later with `addComponent()` not actually adding components on top
