@@ -91,9 +91,21 @@ class ComponentImpl extends ComponentBase {
         if (_cachedScreenX != null && _cachedScreenY != null) {
             return;
         }
-        var screenBounds = asComponent.screenBounds;
-        _cachedScreenX = screenBounds.left;
-        _cachedScreenY = screenBounds.top;
+        var c = asComponent;
+        var p = c.parentComponent;
+        var xpos:Float = c.left;
+        var ypos:Float = c.top;
+        if (p != null) {
+            xpos = p.cachedScreenX + xpos * Toolkit.scale;
+            ypos = p.cachedScreenY + ypos * Toolkit.scale;
+        }
+        var clip = c.componentClipRect;
+        if (clip != null) {
+            xpos -= clip.left * Toolkit.scaleX;
+            ypos -= clip.top * Toolkit.scaleY;
+        }
+        _cachedScreenX = xpos;
+        _cachedScreenY = ypos;
     }
 
     private var cachedScreenX(get, null):Float;
@@ -150,6 +162,129 @@ class ComponentImpl extends ComponentBase {
         }
 
         return clip;
+    }
+
+    public override function draw():Void {
+        if (isClippedOut()) {
+            return;
+        }
+        if (renderCache != null && !_drawingUncached && parentComponent == null && renderCache.drawCached(asComponent)) {
+            return;
+        }
+        super.draw();
+    }
+
+    //***********************************************************************************************************
+    // Render cache
+    //***********************************************************************************************************
+
+    /**
+     * When set, the root component will be drawn from a cached texture instead of drawing every child sprite each frame.
+     */
+    public var renderCache(default, set):haxe.ui.backend.flixel.IComponentRenderCache = null;
+    private function set_renderCache(value:haxe.ui.backend.flixel.IComponentRenderCache):haxe.ui.backend.flixel.IComponentRenderCache {
+        if (renderCache != null && renderCache != value) {
+            renderCache.destroy();
+        }
+        renderCache = value;
+        renderCacheDirty = true;
+        return value;
+    }
+
+    /**
+     * Set on the root component when anything in its tree might look different.
+     */
+    public var renderCacheDirty:Bool = true;
+
+    private var _drawingUncached:Bool = false;
+
+    public function drawUncached():Void {
+        _drawingUncached = true;
+        draw();
+        _drawingUncached = false;
+    }
+
+    private function markRenderDirty() {
+        var c:Component = asComponent;
+        while (c.parentComponent != null) {
+            c = c.parentComponent;
+        }
+        c.renderCacheDirty = true;
+    }
+
+    private var _lastRenderLeft:Float = 0;
+    private var _lastRenderTop:Float = 0;
+    private var _lastRenderHidden:Bool = false;
+    private var _lastRenderAlpha:Float = 1;
+    private var _lastRenderClipX:Float = 0;
+    private var _lastRenderClipY:Float = 0;
+    private var _lastRenderClipW:Float = -1;
+    private var _lastRenderClipH:Float = -1;
+
+    @:access(haxe.ui.core.Component)
+    private function checkRenderChanges() {
+        var c = asComponent;
+        var changed = _updates <= 2;
+        var hidden = c.hidden;
+        if (hidden != _lastRenderHidden) {
+            _lastRenderHidden = hidden;
+            changed = true;
+        }
+        if (_surface != null && _surface.alpha != _lastRenderAlpha) {
+            _lastRenderAlpha = _surface.alpha;
+            changed = true;
+        }
+        // The root moving doesn't change what the cache holds.
+        if (c.parentComponent != null) {
+            var l = c.left;
+            var t = c.top;
+            if (l != _lastRenderLeft || t != _lastRenderTop) {
+                _lastRenderLeft = l;
+                _lastRenderTop = t;
+                changed = true;
+            }
+        }
+        var clip = c.componentClipRect;
+        if (clip == null) {
+            if (_lastRenderClipW != -1) {
+                _lastRenderClipW = -1;
+                changed = true;
+            }
+        } else if (clip.left != _lastRenderClipX || clip.top != _lastRenderClipY || clip.width != _lastRenderClipW || clip.height != _lastRenderClipH) {
+            _lastRenderClipX = clip.left;
+            _lastRenderClipY = clip.top;
+            _lastRenderClipW = clip.width;
+            _lastRenderClipH = clip.height;
+            changed = true;
+        }
+        if (changed) {
+            markRenderDirty();
+        }
+    }
+
+    private override function validateComponentInternal(nextFrame:Bool = true) {
+        super.validateComponentInternal(nextFrame);
+        markRenderDirty();
+    }
+
+    @:access(haxe.ui.core.Component)
+    private function isClippedOut():Bool {
+        var p = parentComponent;
+        if (p == null || asComponent.componentWidth == null || asComponent.componentHeight == null) {
+            return false;
+        }
+        var clip:Component = p.findClipComponent();
+        if (clip == null) {
+            return false;
+        }
+        var rect = clip.componentClipRect;
+        var clipX = clip.cachedScreenX + rect.left * Toolkit.scaleX;
+        var clipY = clip.cachedScreenY + rect.top * Toolkit.scaleY;
+        var x = cachedScreenX;
+        var y = cachedScreenY;
+        var w = asComponent.componentWidth * Toolkit.scaleX;
+        var h = asComponent.componentHeight * Toolkit.scaleY;
+        return x + w <= clipX || y + h <= clipY || x >= clipX + rect.width * Toolkit.scaleX || y >= clipY + rect.height * Toolkit.scaleY;
     }
 
     @:access(haxe.ui.core.Component)
@@ -779,6 +914,7 @@ class ComponentImpl extends ComponentBase {
                 applyVisibility(false);
             }
         }
+        checkRenderChanges();
 
         super.update(elapsed);
 
@@ -887,6 +1023,7 @@ class ComponentImpl extends ComponentBase {
 
     private var _destroyed:Bool = false;
     private function destroyInternal() {
+        renderCache = null;
         if (_surface != null) {
             _surface.destroy();
             _surface = null;
