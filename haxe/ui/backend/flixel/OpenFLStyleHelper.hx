@@ -57,7 +57,7 @@ class OpenFLStyleHelper {
             && style.borderLeftColor == style.borderBottomColor
             && style.borderLeftColor == style.borderTopColor) { // full border
             
-            graphics.lineStyle(style.borderLeftSize * Toolkit.scale, style.borderLeftColor);
+            graphics.lineStyle(style.borderLeftSize * Toolkit.scale, style.borderLeftColor, style.borderOpacity == null ? 1 : style.borderOpacity);
             rc.left += (style.borderLeftSize * Toolkit.scale) / 2;
             rc.top += (style.borderLeftSize * Toolkit.scale) / 2;
             rc.bottom -= (style.borderLeftSize * Toolkit.scale) / 2;
