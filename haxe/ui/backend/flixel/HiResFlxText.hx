@@ -115,6 +115,7 @@ class HiResFlxText extends FlxText {
         // The hitbox stays in game pixels.
         width = frameWidth / appliedResolution;
         height = frameHeight / appliedResolution;
+        origin.set(0, 0);
     }
 
     override public function draw():Void {
