@@ -17,8 +17,9 @@ import openfl.utils.ByteArray;
 @:allow(haxe.ui.backend.ComponentGraphicsSprite)
 class ComponentGraphicsImpl extends ComponentGraphicsBase {
     private var _hasSize:Bool = false;
-    private var bitmapData:BitmapData = null;
     private var sprite:ComponentGraphicsSprite;
+
+    private static var bits:Map<String, BitmapData> = new Map();
 
     private var flashGfxSprite:Sprite = new Sprite();
 
@@ -72,13 +73,8 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
         var w = Std.int(_component.width);
         var h = Std.int(_component.height);
 
-        if (bitmapData != null && (bitmapData.width != w || bitmapData.height != h)) {
-            bitmapData.dispose();
-            bitmapData = null;
-        }
-
-        if (bitmapData == null) {
-            bitmapData = new BitmapData(w, h, true, 0x00000000);
+        if (sprite.pixels == null || sprite.pixels.width != w || sprite.pixels.height != h) {
+            sprite.makeGraphic(w, h, 0x00000000, true);
         }
 
         // convert RGBA -> ARGB (well, actually BGRA for some reason)
@@ -98,13 +94,13 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
             i += 4;
         }
         var byteArray = ByteArray.fromBytes(newPixels);
-        bitmapData.setPixels(new Rectangle(0, 0, bitmapData.width, bitmapData.height), byteArray);
+        sprite.pixels.setPixels(new Rectangle(0, 0, w, h), byteArray);
 
         sprite.width = w;
         sprite.height = h;
 
-        sprite.pixels = bitmapData;
         sprite.visible = (w > 0 && h > 0);
+        sprite._needsDraw = false;
     }
 
     public override function moveTo(x:Float, y:Float) {
@@ -222,20 +218,28 @@ class ComponentGraphicsImpl extends ComponentGraphicsBase {
         if (!_hasSize) {
             return;
         }
+        var resourceKey = Std.string(resource);
         ImageLoader.instance.load(resource, function(imageInfo) {
             if (imageInfo != null) {
                 if (x == null) x = 0;
                 if (y == null) y = 0;
                 if (width == null) width = imageInfo.width;
                 if (height == null) height = imageInfo.height;
-                
+
+                var bit = bits.get(resourceKey);
+                if (bit == null) {
+                    bit = imageInfo.data.parent.bitmap;
+                    bits.set(resourceKey, bit);
+                }
+
                 var mat:Matrix = new Matrix();
                 mat.scale(width / imageInfo.width, height / imageInfo.width);
                 mat.translate(x, y);
-                
-                flashGfxSprite.graphics.beginBitmapFill(imageInfo.data.parent.bitmap, mat);
+
+                flashGfxSprite.graphics.beginBitmapFill(bit, mat);
                 flashGfxSprite.graphics.drawRect(x, y, width, height);
                 flashGfxSprite.graphics.endFill();
+
                 sprite._needsDraw = true;
             } else {
                 trace("could not load: " + resource);
