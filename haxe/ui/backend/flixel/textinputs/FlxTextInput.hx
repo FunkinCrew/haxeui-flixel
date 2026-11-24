@@ -31,14 +31,14 @@ class FlxTextInput extends TextBase {
     public override function focus() {
         tf.startFocus();
     }
-    
+
     public override function blur() {
         tf.endFocus();
     }
 
     public function attach() {
     }
-    
+
     public var visible(get, set):Bool;
     private function get_visible():Bool {
         return tf.visible;
@@ -119,7 +119,7 @@ class FlxTextInput extends TextBase {
             tf.scrollV = vscrollValue;
         }
     }
-    
+
     private function normalizeText(text:String):String {
         text = StringTools.replace(text, "\\n", "\n");
         return text;
@@ -139,7 +139,7 @@ class FlxTextInput extends TextBase {
         _textHeight = Math.round(_textHeight) / Toolkit.scaleY;
 
         //////////////////////////////////////////////////////////////////////////////
-        
+
         _inputData.hscrollMax = tf.maxScrollH;
         // see below
         _inputData.hscrollPageSize = (_width * _inputData.hscrollMax) / _textWidth;
@@ -178,7 +178,7 @@ class FlxTextInput extends TextBase {
                 tf.bold = fontBold;
                 measureTextRequired = true;
             }
-            
+
             var fontItalic = (_textStyle.fontItalic != null ? _textStyle.fontItalic : false);
             if (tf.italic != fontItalic) {
                 tf.italic = fontItalic;
@@ -220,6 +220,9 @@ class FlxTextInput extends TextBase {
         if (tf.width != _width * Toolkit.scaleX) {
             tf.width = _width * Toolkit.scaleX;
             tf.fieldWidth = tf.width;
+            if (tf.wordWrap != _displayData.wordWrap) {
+                tf.wordWrap = _displayData.wordWrap;
+            }
         }
 
         if (tf.height != (_height + PADDING_Y) * Toolkit.scaleY) {
@@ -372,9 +375,9 @@ class FlxTextInput extends TextBase {
 
     private function onInternalChange(text:String, action:FlxInputTextChange) {
         _text = tf.text;
-        
+
         measureText();
-        
+
         if (_inputData.onChangedCallback != null) {
             _inputData.onChangedCallback();
         }
@@ -383,7 +386,7 @@ class FlxTextInput extends TextBase {
     private function onScroll(scrollH:Int, scrollV:Int) {
         _inputData.hscrollPos = tf.scrollH;
         _inputData.vscrollPos = tf.scrollV - 1;
-        
+
         if (_inputData.onScrollCallback != null) {
             _inputData.onScrollCallback();
         }
